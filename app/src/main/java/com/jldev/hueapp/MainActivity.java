@@ -1,6 +1,9 @@
 package com.jldev.hueapp;
 
+import android.app.Application;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
@@ -25,11 +28,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
 
-    RequestQueue queue;
+
     ListView lvLights;
     ArrayAdapter adapter;
     boolean done = false;
-    ConnectionHandler handler = new ConnectionHandler();
+    ConnectionHandler handler;
     ArrayList<String> lights;
     JSONObject response = null;
 
@@ -39,10 +42,15 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         lights = new ArrayList<String>();
 
-        queue = Volley.newRequestQueue(this);
+        handler = (ConnectionHandler) getIntent().getSerializableExtra("handler");
+        String ip = getIntent().getExtras().getString("IP");
+        String user = getIntent().getExtras().getString("user");
+        handler.setUrl(ip,user);
+
+
         handler.setRef(this);
+        handler.GetMethod();
         lvLights = (ListView) findViewById(R.id.lv_available_lights);
-        queue.add(handler.GetMethod("/lights"));
 
 
         Button getButton = (Button) findViewById(R.id.getButton);
@@ -71,7 +79,7 @@ public class MainActivity extends AppCompatActivity{
                     String light = adapter.getItem(position).toString();
                     String command = "/"+light+"/state";
 
-                    queue.add(handler.PutMethod(command,jsonObject));
+                    handler.PutMethod(command,jsonObject);
                 }
             }
         });
@@ -93,7 +101,7 @@ public class MainActivity extends AppCompatActivity{
                     String light = adapter.getItem(position).toString();
                     String command = "/"+light+"/state";
 
-                    queue.add(handler.PutMethod(command,jsonObject));
+                    handler.PutMethod(command,jsonObject);
                 }
             }
         });
@@ -116,7 +124,7 @@ public class MainActivity extends AppCompatActivity{
                     String light = adapter.getItem(position).toString();
                     String command = "/"+light+"/state";
 
-                    queue.add(handler.PutMethod(command,jsonObject));
+                    handler.PutMethod(command,jsonObject);
                 }
             }
         });
@@ -132,7 +140,18 @@ public class MainActivity extends AppCompatActivity{
         if (error.toString().contains("success")){
 
         } else {
-            System.out.println("fuck");
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Something went wrong, sorry man");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                            System.exit(0);
+                        }
+                    });
+            alertDialog.show();
         }
     }
 

@@ -1,12 +1,15 @@
 package com.jldev.hueapp;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,23 +17,25 @@ import java.util.Map;
  * Created by Jeffrey on 4-12-2017.
  */
 
-public class ConnectionHandler {
+public class ConnectionHandler implements Serializable{
 
-    String url = "http://192.168.0.103:81/api/6b6f0a4393acc74c5f00613e8c86fbf/lights";
+    String url =null;
     MainActivity main;
+    RequestQueue queue;
 
-    public void setUrl(String Url) {
-        url = Url;
+    public void setUrl(String ip, String user) {
+        url = "http://"+ip+"/api/"+user +"/lights";
+        System.out.println(url);
     }
 
     public void setRef(MainActivity main) {
         this.main = main;
+        queue = Volley.newRequestQueue(this.main);
     }
 
+    protected void GetMethod() {
 
-    protected JsonObjectRequest GetMethod(String toDo) {
-
-        String usingString = url + toDo;
+        String usingString = url;
 
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, usingString, null, new Response.Listener<JSONObject>() {
             @Override
@@ -44,11 +49,11 @@ public class ConnectionHandler {
             }
         });
 
-        return jsonRequest;
+        queue.add(jsonRequest);
     }
 
 
-    protected JsonObjectRequest PutMethod(String toDo, JSONObject request) {
+    protected void PutMethod(String toDo, JSONObject request) {
 
         String usingString = url + toDo;
 
@@ -79,6 +84,6 @@ public class ConnectionHandler {
             }
         };
 
-        return jsonRequest;
+        queue.add(jsonRequest);
     }
 }
