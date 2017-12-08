@@ -88,4 +88,103 @@
         app:layout_constraintStart_toEndOf="@+id/onButton"
         app:layout_constraintTop_toBottomOf="@+id/lv_available_lights" />
 
+    <SeekBar
+        android:id="@+id/satBar"
+        android:layout_width="139dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="32dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView3"
+        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toTopOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Sat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/onButton" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Hue"
+        app:layout_constraintEnd_toEndOf="@+id/textView3"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Bri"
+        app:layout_constraintEnd_toEndOf="@+id/textView4"
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <SeekBar
+        android:id="@+id/hueBar"
+        android:layout_width="141dp"
+        android:layout_height="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintEnd_toEndOf="@+id/satBar"
+        app:layout_constraintStart_toStartOf="@+id/satBar"
+        app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+    <SeekBar
+        android:id="@+id/briBar"
+        android:layout_width="141dp"
+        android:layout_height="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintEnd_toEndOf="@+id/hueBar"
+        app:layout_constraintStart_toStartOf="@+id/hueBar"
+        app:layout_constraintTop_toTopOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/satValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="@+id/satBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/satBar" />
+
+    <TextView
+        android:id="@+id/hueValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="@+id/hueBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/hueBar" />
+
+    <TextView
+        android:id="@+id/briValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="@+id/briBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/briBar" />
+
+    <ImageView
+        android:id="@+id/colorImage"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/briValue"
+        app:layout_constraintStart_toStartOf="@+id/briBar"
+        app:layout_constraintTop_toBottomOf="@+id/briBar"
+        app:srcCompat="@android:color/black" />
+
 </android.support.constraint.ConstraintLayout>

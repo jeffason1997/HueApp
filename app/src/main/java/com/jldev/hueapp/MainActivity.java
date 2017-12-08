@@ -11,12 +11,16 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.madrapps.pikolo.HSLColorPicker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,10 +35,12 @@ public class MainActivity extends AppCompatActivity{
 
     ListView lvLights;
     ArrayAdapter adapter;
+    ImageView colorEx;
     boolean done = false;
     ConnectionHandler handler;
     ArrayList<String> lights;
     JSONObject response = null;
+    int hue,sat,bri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,72 @@ public class MainActivity extends AppCompatActivity{
         handler.setRef(this);
         handler.GetMethod();
         lvLights = (ListView) findViewById(R.id.lv_available_lights);
+
+        final TextView satValue = (TextView) findViewById(R.id.satValue);
+        final TextView hueValue = (TextView) findViewById(R.id.hueValue);
+        final TextView briValue = (TextView) findViewById(R.id.briValue);
+
+        colorEx = (ImageView) findViewById(R.id.colorImage);
+
+
+        final SeekBar satBar = (SeekBar) findViewById(R.id.satBar);
+        satBar.setMax(100);
+        satBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                 satValue.setText(""+progress);
+                sat=progress;
+                updateColor();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        final SeekBar hueBar = (SeekBar) findViewById(R.id.hueBar);
+        hueBar.setMax(360);
+        hueBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                hueValue.setText(""+progress);
+                hue=progress;
+                updateColor();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        final SeekBar briBar = (SeekBar) findViewById(R.id.briBar);
+        briBar.setMax(100);
+        briBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                briValue.setText(""+progress);
+                bri=progress;
+                updateColor();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
 
         Button getButton = (Button) findViewById(R.id.getButton);
@@ -113,7 +185,11 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View arg){
                 final JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("hue", 12234);
+                    jsonObject.put("hue", ((float)hueBar.getProgress()*182));
+                    jsonObject.put("sat", ((float)satBar.getProgress()/100)*254);
+                    jsonObject.put("bri", ((float)briBar.getProgress()/100)*254);
+
+
                 } catch (JSONException e) {
                     // handle exception
                 }
@@ -121,13 +197,23 @@ public class MainActivity extends AppCompatActivity{
                 SparseBooleanArray checked = lvLights.getCheckedItemPositions();
                 for (int i = 0; i < checked.size(); i++) {
                     int position = checked.keyAt(i);
-                    String light = adapter.getItem(position).toString();
-                    String command = "/"+light+"/state";
+                    System.out.println(checked.get(position));
+                    if(checked.get(position)) {
+                        String light = adapter.getItem(position).toString();
+                        String command = "/" + light + "/state";
+                        handler.PutMethod(command,jsonObject);
+                    }
 
-                    handler.PutMethod(command,jsonObject);
                 }
             }
         });
+    }
+
+    public void updateColor(){
+        float[] hsvColors = new float[]{hue, sat,bri};
+
+        //colorEx.setBackgroundColor(Color.HSVToColor(hsvColors));
+        colorEx.setColorFilter(Color.HSVToColor(hsvColors));
     }
 
     public void setResponse(JSONObject obj){

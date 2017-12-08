@@ -25,7 +25,7 @@ public class HomeScreen extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.putExtra("handler",handler);
                 i.putExtra("IP","192.168.0.103:81");
-                i.putExtra("user","6b6f0a4393acc74c5f00613e8c86fbf");
+                i.putExtra("user","4f4c464515fe6024e7702c8ee9e0c1f"); //refresh every time you use the simulator again
                 startActivity(i);
             }
         });
@@ -35,8 +35,8 @@ public class HomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View arg){
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                i.putExtra("IP","192.168.0.103:81");
-                i.putExtra("user","6b6f0a4393acc74c5f00613e8c86fbf");
+                i.putExtra("IP","145.48.205.33");
+                i.putExtra("user","iYrmsQq1wu5FxF9CPqpJCnm1GpPVylKBWDUsNDhB");
                 startActivity(i);
             }
         });

@@ -52,7 +52,6 @@ public class ConnectionHandler implements Serializable{
         queue.add(jsonRequest);
     }
 
-
     protected void PutMethod(String toDo, JSONObject request) {
 
         String usingString = url + toDo;
@@ -68,7 +67,6 @@ public class ConnectionHandler implements Serializable{
                 main.checkError(error);
             }
         })
-
         {
             @Override
             public Map<String, String> getHeaders() {
