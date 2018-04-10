@@ -138,15 +138,17 @@ public class MainActivity extends AppCompatActivity{
         getButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View arg){
+                updateDatabase();
                 ArrayList<String> tempList = new ArrayList<>();
                 SparseBooleanArray checked = lvLights.getCheckedItemPositions();
                 for (int i = 0; i < checked.size(); i++) {
                     int position = checked.keyAt(i);
                     if(checked.get(position)) {
+                        System.out.println(adapter.getItem(position).toString());
                         tempList.add(adapter.getItem(position).toString());
                     }
                 }
-                updateDatabase();
+
                 Intent intent = new Intent(getApplicationContext(), DetailedActivity.class);
                 intent.putStringArrayListExtra("LIGHTS",tempList);
                 startActivity(intent);
@@ -220,7 +222,6 @@ public class MainActivity extends AppCompatActivity{
                         String light = adapter.getItem(position).toString();
                         String command = "/" + light + "/state";
                         handler.PutMethod(command,jsonObject);
-                        System.out.println(jsonObject.toString());
                     }
 
                 }
