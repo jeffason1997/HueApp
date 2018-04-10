@@ -1,6 +1,5 @@
 package com.jldev.hueapp;
 
-import android.app.Application;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
@@ -10,25 +9,19 @@ import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import com.madrapps.pikolo.HSLColorPicker;
+import com.jldev.hueapp.Internet.ConnectionHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
 

@@ -1,4 +1,4 @@
-package com.jldev.hueapp;
+package com.jldev.hueapp.Internet;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -6,6 +6,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.jldev.hueapp.MainActivity;
 
 import org.json.JSONObject;
 
@@ -33,7 +34,7 @@ public class ConnectionHandler implements Serializable{
         queue = Volley.newRequestQueue(this.main);
     }
 
-    protected void GetMethod() {
+    public void GetMethod() {
 
         String usingString = url;
 
@@ -52,7 +53,7 @@ public class ConnectionHandler implements Serializable{
         queue.add(jsonRequest);
     }
 
-    protected void PutMethod(String toDo, JSONObject request) {
+    public void PutMethod(String toDo, JSONObject request) {
 
         String usingString = url + toDo;
 

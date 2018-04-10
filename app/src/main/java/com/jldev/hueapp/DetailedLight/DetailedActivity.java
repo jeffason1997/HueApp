@@ -1,9 +1,12 @@
-package com.jldev.hueapp;
+package com.jldev.hueapp.DetailedLight;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.jldev.hueapp.Light;
+import com.jldev.hueapp.R;
 
 import java.util.ArrayList;
 

@@ -7,7 +7,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.jldev.hueapp.Internet.ConnectionHandler;
+
 public class HomeScreen extends AppCompatActivity {
+
 
     ConnectionHandler handler = new ConnectionHandler();
 
@@ -35,6 +38,7 @@ public class HomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View arg){
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                i.putExtra("handler",handler);
                 i.putExtra("IP","145.48.205.33");
                 i.putExtra("user","iYrmsQq1wu5FxF9CPqpJCnm1GpPVylKBWDUsNDhB");
                 startActivity(i);
@@ -53,6 +57,7 @@ public class HomeScreen extends AppCompatActivity {
                 String sIp = ip.getText().toString();
                 String sUser = user.getText().toString();
 
+                i.putExtra("handler",handler);
                 i.putExtra("IP",sIp);
                 i.putExtra("user",sUser);
                 startActivity(i);

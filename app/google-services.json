@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "589233964447",
+    "firebase_url": "https://hueapp-22244.firebaseio.com",
+    "project_id": "hueapp-22244",
+    "storage_bucket": "hueapp-22244.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589233964447:android:7f93ce2cfeefec35",
+        "android_client_info": {
+          "package_name": "com.jldev.hueapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589233964447-r09p1mabcst6qctmmcah1h145v6v9i51.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jldev.hueapp",
+            "certificate_hash": "7c41a41eb7ab6cfd343c82e583ccd355a11e4d72"
+          }
+        },
+        {
+          "client_id": "589233964447-o64r995jnj42jhc0fbd5b6jt4nrlvfas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFGiX_68lwFOI7Q6iLR92iD06jxKhPENE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589233964447-o64r995jnj42jhc0fbd5b6jt4nrlvfas.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
