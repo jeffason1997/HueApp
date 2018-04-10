@@ -1,10 +1,13 @@
 package com.jldev.hueapp;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -15,46 +18,58 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.jldev.hueapp.DetailedLight.DetailedActivity;
 import com.jldev.hueapp.Internet.ConnectionHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity{
 
-
-    ListView lvLights;
-    ArrayAdapter adapter;
-    ImageView colorEx;
-    boolean done = false;
-    ConnectionHandler handler;
-    ArrayList<String> lights;
-    JSONObject response = null;
-    int hue,sat,bri;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static String TAG = "MainActivity";
+    private ListView lvLights;
+    private ArrayAdapter adapter;
+    private ImageView colorEx;
+    private ConnectionHandler handler;
+    private ArrayList<String> lights = new ArrayList<String>();
+    private JSONObject response = null;
+    private int hue,sat,bri,counter;
+    public static DocumentReference basic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        lights = new ArrayList<String>();
 
         handler = (ConnectionHandler) getIntent().getSerializableExtra("handler");
         String ip = getIntent().getExtras().getString("IP");
         String user = getIntent().getExtras().getString("user");
         handler.setUrl(ip,user);
-
-
         handler.setRef(this);
         handler.GetMethod();
-        lvLights = (ListView) findViewById(R.id.lv_available_lights);
+        updateDatabase();
 
+
+        connectDatabase(ip,user);
+
+        lvLights = (ListView) findViewById(R.id.lv_available_lights);
         final TextView satValue = (TextView) findViewById(R.id.satValue);
         final TextView hueValue = (TextView) findViewById(R.id.hueValue);
         final TextView briValue = (TextView) findViewById(R.id.briValue);
-
         colorEx = (ImageView) findViewById(R.id.colorImage);
 
 
@@ -77,6 +92,7 @@ public class MainActivity extends AppCompatActivity{
 
             }
         });
+
         final SeekBar hueBar = (SeekBar) findViewById(R.id.hueBar);
         hueBar.setMax(360);
         hueBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -122,7 +138,18 @@ public class MainActivity extends AppCompatActivity{
         getButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View arg){
-
+                ArrayList<String> tempList = new ArrayList<>();
+                SparseBooleanArray checked = lvLights.getCheckedItemPositions();
+                for (int i = 0; i < checked.size(); i++) {
+                    int position = checked.keyAt(i);
+                    if(checked.get(position)) {
+                        tempList.add(adapter.getItem(position).toString());
+                    }
+                }
+                updateDatabase();
+                Intent intent = new Intent(getApplicationContext(), DetailedActivity.class);
+                intent.putStringArrayListExtra("LIGHTS",tempList);
+                startActivity(intent);
             }
         });
 
@@ -138,7 +165,6 @@ public class MainActivity extends AppCompatActivity{
                 }
 
                 SparseBooleanArray checked = lvLights.getCheckedItemPositions();
-                ArrayList<String> selectedItems = new ArrayList<String>();
                 for (int i = 0; i < checked.size(); i++) {
                     int position = checked.keyAt(i);
                     String light = adapter.getItem(position).toString();
@@ -178,9 +204,9 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View arg){
                 final JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("hue", ((float)hueBar.getProgress()*182));
-                    jsonObject.put("sat", ((float)satBar.getProgress()/100)*254);
-                    jsonObject.put("bri", ((float)briBar.getProgress()/100)*254);
+                    jsonObject.put("hue", (int)((float)hueBar.getProgress()*182));
+                    jsonObject.put("sat", (int)(((float)satBar.getProgress()*254)/100));
+                    jsonObject.put("bri", (int)(((float)briBar.getProgress()*254)/100));
 
 
                 } catch (JSONException e) {
@@ -190,11 +216,11 @@ public class MainActivity extends AppCompatActivity{
                 SparseBooleanArray checked = lvLights.getCheckedItemPositions();
                 for (int i = 0; i < checked.size(); i++) {
                     int position = checked.keyAt(i);
-                    System.out.println(checked.get(position));
                     if(checked.get(position)) {
                         String light = adapter.getItem(position).toString();
                         String command = "/" + light + "/state";
                         handler.PutMethod(command,jsonObject);
+                        System.out.println(jsonObject.toString());
                     }
 
                 }
@@ -212,13 +238,53 @@ public class MainActivity extends AppCompatActivity{
     public void setResponse(JSONObject obj){
         response = obj;
         setListview();
+        updateDatabase();
+    }
 
+    public void setDataResponse(JSONObject obj){
+        Light current = new Light();
+        try {
+            JSONObject state = obj.getJSONObject("state");
+            current.On = state.getBoolean("on");
+            current.Bri = state.getInt("bri");
+            current.Hue = state.getInt("hue");
+            current.Sat = state.getInt("sat");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Map<String,Object> light = new HashMap<>();
+        light.put("ID",lights.get(counter));
+        light.put("Hue",current.Hue);
+        light.put("Bri",current.Bri);
+        light.put("Sat",current.Sat);
+        light.put("On",current.On);
+
+        basic.collection("Lights").document(lights.get(counter)).set(light)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                    }
+                });
+
+
+        counter++;
+    }
+
+    private void updateDatabase() {
+        counter = 0;
+        for(String s : lights){
+            handler.GetLightMethod("/"+s);
+        }
     }
 
     public void checkError(VolleyError error){
-        if (error.toString().contains("success")){
+        if (error.toString().contains("success")) {
+
 
         } else {
+            System.out.println(error.toString());
             AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
             alertDialog.setTitle("Alert");
             alertDialog.setMessage("Something went wrong, sorry man");
@@ -239,10 +305,8 @@ public class MainActivity extends AppCompatActivity{
             JSONArray names = response.names();
 
             for (int i = 0; i < names.length(); i++) {
-                System.out.println(names.getString(i));
                 lights.add(names.getString(i));
             }
-            done = true;
 
         }catch(JSONException e){
             e.printStackTrace();
@@ -254,6 +318,27 @@ public class MainActivity extends AppCompatActivity{
             lvLights.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             lvLights.setItemsCanFocus(false);
         }
+    }
+
+    private void connectDatabase(String ip, String user){
+        Map<String,Object> config = new HashMap<>();
+        config.put("IP",ip);
+        config.put("User",user);
+
+        db.collection("Users").document(user).set(config)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG,"Succes");
+                    }
+                }) .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG,"Succes");
+            }
+        });
+
+        MainActivity.basic = db.collection("Users").document(user);
     }
 
 

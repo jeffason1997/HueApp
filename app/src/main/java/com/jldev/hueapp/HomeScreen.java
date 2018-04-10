@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.FirebaseApp;
 import com.jldev.hueapp.Internet.ConnectionHandler;
 
 public class HomeScreen extends AppCompatActivity {

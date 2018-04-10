@@ -53,6 +53,25 @@ public class ConnectionHandler implements Serializable{
         queue.add(jsonRequest);
     }
 
+    public void GetLightMethod(String toDo) {
+
+        String usingString = url+toDo;
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, usingString, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                main.setDataResponse(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                main.checkError(error);
+            }
+        });
+
+        queue.add(jsonRequest);
+    }
+
     public void PutMethod(String toDo, JSONObject request) {
 
         String usingString = url + toDo;
